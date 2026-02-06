@@ -12,8 +12,7 @@ const { title = 'Portfolio', description = 'Fullstack developer portfolio' } = A
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
+		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
 		<meta name="description" content={description} />
 		<title>{title}</title>
@@ -193,16 +192,16 @@ const { title = 'Portfolio', description = 'Fullstack developer portfolio' } = A
 		--bg: #f6f6f6;
 		--surface: #ffffff;
 		--text: #101010;
-		--muted: #585858;
+		--muted: #4a4a4a;
 		--line: #1a1a1a;
 	}
 
 	:root[data-theme='dark'] {
-		--bg: #0a1224;
-		--surface: #111b34;
+		--bg: #0f1b2d;
+		--surface: #16253d;
 		--text: #f1f1f1;
-		--muted: #b6b6b6;
-		--line: #ededed;
+		--muted: #c4d0e4;
+		--line: #dbe5f5;
 	}
 
 	*,
@@ -226,7 +225,7 @@ const { title = 'Portfolio', description = 'Fullstack developer portfolio' } = A
 	.theme-toggle {
 		position: absolute;
 		top: 1rem;
-		right: 1rem;
+		right: max(1rem, calc((100vw - 1040px) / 2));
 		display: inline-block;
 		z-index: 20;
 	}
@@ -279,7 +278,7 @@ const { title = 'Portfolio', description = 'Fullstack developer portfolio' } = A
 	@media (min-width: 900px) {
 		.theme-toggle {
 			top: 1.15rem;
-			right: clamp(7rem, 22vw, 21rem);
+			right: max(1rem, calc((100vw - 1040px) / 2));
 		}
 
 		.theme-trigger {
@@ -351,7 +350,7 @@ const { title = 'Portfolio', description = 'Fullstack developer portfolio' } = A
 	@media (max-width: 640px) {
 		.theme-toggle {
 			top: max(0.95rem, calc(env(safe-area-inset-top) + 0.35rem));
-			right: 0.7rem;
+			right: max(0.7rem, calc((100vw - 1040px) / 2));
 		}
 
 		.theme-trigger,
