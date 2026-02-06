@@ -1,0 +1,30 @@
+---
+interface Props {
+	name: string;
+	tagline?: string;
+}
+
+const { name, tagline = 'Built with love and tears ❤️🥲' } = Astro.props;
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+	<p>&copy; {currentYear} {name}</p>
+	<p>{tagline}</p>
+</footer>
+
+<style>
+	.site-footer {
+		margin-top: 2.5rem;
+		padding-top: 1.05rem;
+		border-top: 1px solid var(--line);
+		display: grid;
+		gap: 0.35rem;
+	}
+
+	.site-footer p {
+		margin: 0;
+		color: var(--muted);
+		font: 500 0.88rem/1.45 'IBM Plex Mono', 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+	}
+</style>

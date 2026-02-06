@@ -1,0 +1,319 @@
+<header>
+	<div id="theme-toggle" class="theme-toggle" data-open="false">
+		<button
+			id="theme-toggle-trigger"
+			type="button"
+			class="theme-trigger"
+			aria-label="Theme: Auto"
+			aria-haspopup="menu"
+			aria-expanded="false"
+			aria-controls="theme-options"
+			data-theme-icon="light"
+		>
+			<span class="theme-trigger-icon theme-icon-light" aria-hidden="true" hidden>
+				<svg viewBox="0 0 24 24" focusable="false">
+					<circle class="theme-icon-fill" cx="12" cy="12" r="4.8" />
+					<path class="theme-icon-fill" d="M12 2.2l1.1 2.5h-2.2z" />
+					<path class="theme-icon-fill" d="M12 21.8l1.1-2.5h-2.2z" />
+					<path class="theme-icon-fill" d="M2.2 12l2.5-1.1v2.2z" />
+					<path class="theme-icon-fill" d="M21.8 12l-2.5-1.1v2.2z" />
+					<path class="theme-icon-fill" d="M5 5l2.5.8-1.7 1.7z" />
+					<path class="theme-icon-fill" d="M19 5l-.8 2.5-1.7-1.7z" />
+					<path class="theme-icon-fill" d="M5 19l.8-2.5 1.7 1.7z" />
+					<path class="theme-icon-fill" d="M19 19l-2.5-.8 1.7-1.7z" />
+				</svg>
+			</span>
+			<span class="theme-trigger-icon theme-icon-dark" aria-hidden="true">
+				<svg viewBox="0 0 24 24" focusable="false">
+					<path class="theme-icon-fill" d="M10.7 3.8a8.6 8.6 0 1 0 9.1 11.8A7.2 7.2 0 1 1 10.7 3.8z" />
+					<path class="theme-icon-fill" d="M16.3 6.2l0.55 1.2 1.2 0.55-1.2 0.55-0.55 1.2-0.55-1.2-1.2-0.55 1.2-0.55z" />
+					<path class="theme-icon-fill" d="M19.1 10.5l0.35 0.76 0.76 0.35-0.76 0.35-0.35 0.76-0.35-0.76-0.76-0.35 0.76-0.35z" />
+				</svg>
+			</span>
+		</button>
+		<div id="theme-options" class="theme-options" role="menu" aria-label="Color theme options">
+			<button
+				type="button"
+				class="theme-option"
+				data-theme-mode="system"
+				role="menuitemradio"
+				aria-checked="true"
+			>
+				Auto
+			</button>
+			<button
+				type="button"
+				class="theme-option"
+				data-theme-mode="light"
+				role="menuitemradio"
+				aria-checked="false"
+			>
+				Light
+			</button>
+			<button
+				type="button"
+				class="theme-option"
+				data-theme-mode="dark"
+				role="menuitemradio"
+				aria-checked="false"
+			>
+				Dark
+			</button>
+		</div>
+	</div>
+</header>
+
+<script is:inline>
+	(() => {
+		const root = document.documentElement;
+		const storageKey = 'portfolio-theme-mode';
+		const legacyStorageKey = 'portfolio-theme';
+		const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+		const toggleRoot = document.getElementById('theme-toggle');
+		const trigger = document.getElementById('theme-toggle-trigger');
+		const lightIcon = trigger?.querySelector('.theme-icon-light');
+		const darkIcon = trigger?.querySelector('.theme-icon-dark');
+		const options = Array.from(document.querySelectorAll('.theme-option'));
+		const modeLabels = { system: 'Auto', light: 'Light', dark: 'Dark' };
+
+		const resolveTheme = (mode) =>
+			mode === 'system' ? (mediaQuery.matches ? 'dark' : 'light') : mode;
+
+		const setOpenState = (isOpen) => {
+			if (!toggleRoot || !trigger) {
+				return;
+			}
+			toggleRoot.setAttribute('data-open', String(isOpen));
+			trigger.setAttribute('aria-expanded', String(isOpen));
+		};
+
+		const applyThemeMode = (mode) => {
+			const resolvedTheme = resolveTheme(mode);
+			const triggerIconMode = resolvedTheme === 'dark' ? 'light' : 'dark';
+			root.setAttribute('data-theme-mode', mode);
+			root.setAttribute('data-theme', resolvedTheme);
+			if (trigger) {
+				const label = modeLabels[mode] || 'Auto';
+				trigger.setAttribute('data-theme-icon', triggerIconMode);
+				trigger.setAttribute('aria-label', `Theme: ${label}`);
+			}
+			if (lightIcon && darkIcon) {
+				lightIcon.hidden = triggerIconMode !== 'light';
+				darkIcon.hidden = triggerIconMode !== 'dark';
+			}
+
+			options.forEach((option) => {
+				const isActive = option.getAttribute('data-theme-mode') === mode;
+				option.setAttribute('aria-checked', String(isActive));
+			});
+		};
+
+		const savedMode = localStorage.getItem(storageKey);
+		const legacyMode = localStorage.getItem(legacyStorageKey);
+		const initialMode =
+			savedMode === 'light' || savedMode === 'dark' || savedMode === 'system'
+				? savedMode
+				: legacyMode === 'light' || legacyMode === 'dark'
+					? legacyMode
+					: 'system';
+
+		applyThemeMode(initialMode);
+
+		options.forEach((option) => {
+			option.addEventListener('click', () => {
+				const nextMode = option.getAttribute('data-theme-mode') || 'system';
+				applyThemeMode(nextMode);
+				localStorage.setItem(storageKey, nextMode);
+				setOpenState(false);
+			});
+		});
+
+		trigger?.addEventListener('click', (event) => {
+			event.stopPropagation();
+			const isOpen = toggleRoot?.getAttribute('data-open') === 'true';
+			setOpenState(!isOpen);
+		});
+
+		document.addEventListener('click', (event) => {
+			if (toggleRoot?.getAttribute('data-open') !== 'true') {
+				return;
+			}
+			const target = event.target;
+			if (target instanceof Node && toggleRoot && !toggleRoot.contains(target)) {
+				setOpenState(false);
+			}
+		});
+
+		document.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape') {
+				setOpenState(false);
+			}
+		});
+
+		const handleSystemThemeChange = () => {
+			if (root.getAttribute('data-theme-mode') === 'system') {
+				applyThemeMode('system');
+			}
+		};
+
+		if (typeof mediaQuery.addEventListener === 'function') {
+			mediaQuery.addEventListener('change', handleSystemThemeChange);
+		} else if (typeof mediaQuery.addListener === 'function') {
+			mediaQuery.addListener(handleSystemThemeChange);
+		}
+
+		setOpenState(false);
+	})();
+</script>
+
+<style>
+	.theme-toggle {
+		position: absolute;
+		top: 1rem;
+		right: max(1rem, calc((100vw - 1040px) / 2));
+		display: inline-block;
+		z-index: 20;
+	}
+
+	.theme-trigger {
+		appearance: none;
+		border: 1px solid var(--line);
+		border-radius: 999px;
+		background: var(--surface);
+		color: var(--text);
+		cursor: pointer;
+		display: inline-grid;
+		place-items: center;
+		width: 2.05rem;
+		height: 2.05rem;
+		padding: 0;
+		font: 600 0.72rem/1 'IBM Plex Mono', 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		min-width: 0;
+		text-align: left;
+	}
+
+	.theme-trigger-icon {
+		display: block;
+		width: 1.3rem;
+		height: 1.3rem;
+	}
+
+	.theme-trigger-icon[hidden] {
+		display: none;
+	}
+
+	.theme-trigger svg {
+		display: block;
+		width: 100%;
+		height: 100%;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.8;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+
+	.theme-trigger .theme-icon-fill {
+		fill: currentColor;
+		stroke: none;
+	}
+
+	@media (min-width: 900px) {
+		.theme-toggle {
+			top: 1.15rem;
+			right: max(1rem, calc((100vw - 1040px) / 2));
+		}
+
+		.theme-trigger {
+			width: 2.55rem;
+			height: 2.55rem;
+		}
+
+		.theme-trigger-icon {
+			width: 1.62rem;
+			height: 1.62rem;
+		}
+	}
+
+	.theme-options {
+		position: absolute;
+		top: calc(100% + 0.36rem);
+		right: 0;
+		display: none;
+		gap: 0.15rem;
+		padding: 0.2rem;
+		border: 1px solid var(--line);
+		border-radius: 0.6rem;
+		background: var(--surface);
+		transform-origin: top right;
+	}
+
+	.theme-toggle[data-open='true'] .theme-options {
+		display: grid;
+		animation: theme-menu-in 150ms ease;
+	}
+
+	@keyframes theme-menu-in {
+		from {
+			opacity: 0;
+			transform: translateY(-4px) scale(0.97);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0) scale(1);
+		}
+	}
+
+	.theme-option {
+		appearance: none;
+		border: 0;
+		border-radius: 0.42rem;
+		background: transparent;
+		color: var(--text);
+		cursor: pointer;
+		padding: 0.35rem 0.56rem;
+		font: 600 0.72rem/1 'IBM Plex Mono', 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		text-align: left;
+		min-width: 5.15rem;
+	}
+
+	.theme-option[aria-checked='true'] {
+		background: var(--text);
+		color: var(--surface);
+	}
+
+	.theme-trigger:focus-visible,
+	.theme-option:focus-visible {
+		outline: 2px solid var(--line);
+		outline-offset: 1px;
+	}
+
+	@media (max-width: 640px) {
+		.theme-toggle {
+			top: max(0.95rem, calc(env(safe-area-inset-top) + 0.35rem));
+			right: max(0.7rem, calc((100vw - 1040px) / 2));
+		}
+
+		.theme-option {
+			padding: 0.45rem 0.68rem;
+			font-size: 0.78rem;
+			min-width: 5.8rem;
+		}
+
+		.theme-trigger {
+			width: 2.55rem;
+			height: 2.55rem;
+			padding: 0;
+			min-width: 0;
+		}
+
+		.theme-trigger-icon {
+			width: 1.62rem;
+			height: 1.62rem;
+		}
+	}
+</style>
