@@ -1,46 +1,104 @@
-# Astro Starter Kit: Basics
+# Khai Portfolio (Astro)
 
-```sh
-npm create astro@latest -- --template basics
-```
+Minimal personal portfolio built with Astro, with a responsive modern layout and theme switching.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Tech Stack
 
-## 🚀 Project Structure
+- Astro 5
+- Astro `Image` component (`astro:assets`) for optimized profile image delivery
+- Plain CSS (component-scoped + layout styles)
 
-Inside of your Astro project, you'll see the following folders and files:
+## Features
+
+- Responsive portfolio sections: Hero, Stack, Experience, Education, Selected Work, Contact
+- Dynamic footer component with current year
+- Header component with theme switcher (`Auto`, `Light`, `Dark`)
+- Theme preference persistence via `localStorage`
+- System theme sync when `Auto` is selected
+- Rocket favicon in `.ico` format
+
+## Project Structure
 
 ```text
 /
 ├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
+│   ├── favicon.ico
+│   └── ...
+├── src/
+│   ├── assets/
+│   │   └── khai.jpg
+│   ├── components/
+│   │   ├── Footer.astro
+│   │   └── Header.astro
+│   ├── layouts/
+│   │   └── Layout.astro
+│   └── pages/
+│       └── index.astro
 └── package.json
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## Development
 
-## 🧞 Commands
+Requirements:
 
-All commands are run from the root of the project, from a terminal:
+- Node.js `>=18.20.8`
+- npm
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+Install and run:
 
-## 👀 Want to learn more?
+```sh
+npm install
+npm run dev
+```
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Build and preview:
+
+```sh
+npm run build
+npm run preview
+```
+
+## Content Editing
+
+Main content is in:
+
+- `src/pages/index.astro`
+
+Theme variables (light/dark colors) are in:
+
+- `src/layouts/Layout.astro`
+
+Theme toggle behavior/UI is in:
+
+- `src/components/Header.astro`
+
+Footer text and structure are in:
+
+- `src/components/Footer.astro`
+
+## Deployment (Vercel)
+
+This project deploys cleanly on Vercel with default Astro settings.
+
+### Option 1: Vercel Dashboard
+
+1. Push this repo to GitHub/GitLab/Bitbucket
+2. Import the repo in Vercel
+3. Use these settings if prompted:
+   - Framework Preset: `Astro`
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+4. Deploy
+
+### Option 2: Vercel CLI
+
+```sh
+npm i -g vercel
+vercel
+```
+
+For production deploy:
+
+```sh
+vercel --prod
+```
